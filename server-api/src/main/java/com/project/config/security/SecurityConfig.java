@@ -2,6 +2,7 @@ package com.project.config.security;
 
 import com.project.config.jwt.filter.AuthTokenFilter;
 import com.project.config.jwt.handler.AuthEntryPointHandler;
+import com.project.config.jwt.handler.AuthenticationAccessDeniedHandler;
 import com.project.config.jwt.service.MemberDetailsServiceImpl;
 import com.project.config.oauth2.handler.OAuth2AuthenticationFailureHandler;
 import com.project.config.oauth2.handler.OAuth2AuthenticationSuccessHandler;
@@ -31,21 +32,25 @@ public class SecurityConfig {
     // OAuth2 인증 실패시, 수행하는 Handler
     private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
     private final AuthEntryPointHandler authEntryPointHandler;
+    private final AuthenticationAccessDeniedHandler accessDeniedHandler;
     @Value("${spring.security.jwt.token.cookie.name}")
     private String JWTCookieName;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http.csrf(AbstractHttpConfigurer::disable);
         http.cors(AbstractHttpConfigurer::disable);
-        http.exceptionHandling(httpSecurityExceptionHandlingConfigurer -> httpSecurityExceptionHandlingConfigurer.authenticationEntryPoint(authEntryPointHandler));
+
         http.authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(HttpMethod.GET, "/private/**").authenticated()
-                .requestMatchers("/admin/**").hasRole(Role.ADMIN.name())
+                .requestMatchers("/admin/**").hasRole("ADMIN")
+//                .requestMatchers("/admin/**").authenticated()
                 .requestMatchers("/oauth2/authorization/**").permitAll()
                 .requestMatchers("/loginForm").permitAll()
-                .requestMatchers("/main").permitAll()
+                .requestMatchers("/favicon").permitAll()
+                .requestMatchers("/main").authenticated()
                 .anyRequest().authenticated()
         );
+
         http.oauth2Login(oauth2 -> oauth2.loginPage("/loginForm")
                 .defaultSuccessUrl("/main")
                 .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(oAuth2MemberService))
@@ -61,6 +66,8 @@ public class SecurityConfig {
 
         http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
+        http.exceptionHandling(httpSecurityExceptionHandlingConfigurer -> httpSecurityExceptionHandlingConfigurer.authenticationEntryPoint(authEntryPointHandler));
+        http.exceptionHandling(httpSecurityExceptionHandlingConfigurer -> httpSecurityExceptionHandlingConfigurer.accessDeniedHandler(accessDeniedHandler));
         return http.build();
     }
 }

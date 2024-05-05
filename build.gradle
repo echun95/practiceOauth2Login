@@ -34,6 +34,9 @@ subprojects{
 		annotationProcessor 'org.projectlombok:lombok'
 		//db
 		runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+		// https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+		implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
+
 
 		//test
 		testImplementation 'org.springframework.boot:spring-boot-starter-test'

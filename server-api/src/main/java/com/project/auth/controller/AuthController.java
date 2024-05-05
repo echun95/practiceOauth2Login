@@ -18,7 +18,7 @@ public class AuthController {
         return "privatePage";
     }
 
-    @GetMapping("/admin")
+    @GetMapping("/admin/page")
     public String adminPage(){
         return "adminPage";
     }
@@ -26,5 +26,9 @@ public class AuthController {
     @GetMapping("/main")
     public String indexPage(){
         return "index";
+    }
+    @GetMapping("/accessDenied")
+    public String accessDenied(){
+        return "accessDenied";
     }
 }

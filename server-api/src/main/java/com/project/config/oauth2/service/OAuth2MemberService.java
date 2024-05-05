@@ -34,7 +34,7 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
         String providerId = memberInfo.getProviderId();
         String email = memberInfo.getEmail();
         String username = memberInfo.getName();
-        Role role = Role.USER;
+        Role role = Role.ROLE_USER;
 
         Optional<Member> findMember = memberRepository.findByEmail(memberInfo.getEmail());
         Member member;

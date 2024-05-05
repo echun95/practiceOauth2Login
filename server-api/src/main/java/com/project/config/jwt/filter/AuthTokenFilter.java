@@ -1,19 +1,16 @@
 package com.project.config.jwt.filter;
 
 import com.project.auth.repository.MemberRepository;
-import com.project.common.exception.ErrorResponse;
 import com.project.config.jwt.service.MemberDetailsServiceImpl;
 import com.project.config.jwt.util.JwtUtils;
 import com.project.entity.Member;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,7 +20,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 /**
@@ -44,7 +40,9 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 		try {
 			// 쿠키에 저장된 액세스 토큰 값 저장
 			String jwt = jwtUtils.getJwtFromCookies(request);
-
+			if(jwt == null || !StringUtils.hasText(jwt)){
+				throw new RuntimeException("인증을 실패했습니다. 다시 로그인 해주세요.");
+			}
 			// 액세스 토큰 검증
 			if (StringUtils.hasText(jwt) && jwtUtils.validateJwtToken(jwt)) {
 				// 토큰 값 파싱 후 ID 추출
@@ -79,10 +77,10 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-		String[] excludedEndpoints = new String[] {"/loginForm"};
+		String[] excludedEndpoints = new String[] {"/loginForm","/css","/favicon.ico","/js"};
 		String path = request.getRequestURI();
 
-		return Arrays.stream(excludedEndpoints).anyMatch(path::contains);
+		return org.apache.commons.lang3.StringUtils.startsWithAny(path, excludedEndpoints);
 	}
 
 	/**
