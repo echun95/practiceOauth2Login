@@ -1,0 +1,5 @@
+rootProject.name = 'couple-diary'
+include 'server-batch'
+include 'server-api'
+include 'module-core'
+
