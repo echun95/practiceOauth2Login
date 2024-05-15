@@ -1,6 +1,7 @@
 package com.project.config.oauth2.service;
 
 import com.project.config.oauth2.dto.GoogleMemberInfo;
+import com.project.config.oauth2.dto.KakaoMemberInfo;
 import com.project.config.oauth2.dto.OAuth2MemberInfo;
 import com.project.config.oauth2.dto.PrincipalDetails;
 import com.project.auth.repository.MemberRepository;
@@ -29,6 +30,8 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
         OAuth2MemberInfo memberInfo = null;
         if (userRequest.getClientRegistration().getRegistrationId().equals("google")) {
             memberInfo = new GoogleMemberInfo(oAuth2User.getAttributes());
+        }else if(userRequest.getClientRegistration().getRegistrationId().equals("kakao")){
+            memberInfo = new KakaoMemberInfo(oAuth2User.getAttributes());
         }
         String provider = memberInfo.getProvider();
         String providerId = memberInfo.getProviderId();

@@ -41,12 +41,11 @@ public class SecurityConfig {
         http.cors(AbstractHttpConfigurer::disable);
 
         http.authorizeHttpRequests(authorize -> authorize
+                .requestMatchers("/oauth2/authorization/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/private/**").authenticated()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
-//                .requestMatchers("/admin/**").authenticated()
-                .requestMatchers("/oauth2/authorization/**").permitAll()
                 .requestMatchers("/loginForm").permitAll()
-                .requestMatchers("/favicon").permitAll()
+                .requestMatchers("/favicon.ico").permitAll()
                 .requestMatchers("/main").authenticated()
                 .anyRequest().authenticated()
         );

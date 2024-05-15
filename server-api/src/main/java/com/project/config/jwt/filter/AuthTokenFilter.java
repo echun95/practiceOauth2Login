@@ -40,7 +40,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 		try {
 			// 쿠키에 저장된 액세스 토큰 값 저장
 			String jwt = jwtUtils.getJwtFromCookies(request);
-			if(jwt == null || !StringUtils.hasText(jwt)){
+			if(!StringUtils.hasText(jwt)){
 				throw new RuntimeException("인증을 실패했습니다. 다시 로그인 해주세요.");
 			}
 			// 액세스 토큰 검증
